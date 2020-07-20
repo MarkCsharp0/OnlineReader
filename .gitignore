@@ -1,0 +1,17 @@
+bin
+obj
+StyleCop.Cache
+_ReSharper.Caches
+_TeamCity.*
+*.user
+*.suo
+*.~*
+.*
+
+!.nuget
+!.gitignore
+!.version
+!.dockerignore
+!.editorconfig
+!.gitlab-ci.yml
+packages
