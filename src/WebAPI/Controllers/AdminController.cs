@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OnlineReader.Data.Entities;
@@ -9,23 +10,29 @@ using WebAPI.Models;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    /// <summary>
-    /// Контроллер для администратора.
-    /// </summary>
-    public class AdminController : Controller
+    [Route("[controller]")]
+    /// <inheritdoc />
+    public class AdminController : ControllerBase
     {
+        /// <summary>
+        /// Класс для маппинга.
+        /// </summary>
+        private readonly IMapper _mapper;
+
         /// <summary>
         /// API для управления пользователями.
         /// </summary>
-        private UserManager<AppUser> userManager;
+        private readonly UserManager<AppUser> userManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AdminController"/> class.
         /// </summary>
+        /// <param name="mapper">Класс для маппинга.</param>
         /// <param name="usrMgr">API для управления пользователями.</param>
-        public AdminController(UserManager<AppUser> usrMgr)
+        public AdminController(IMapper mapper, UserManager<AppUser> usrMgr)
         {
             userManager = usrMgr;
+            _mapper = mapper;
         }
 
         /// <summary>

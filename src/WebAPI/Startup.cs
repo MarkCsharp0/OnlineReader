@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -7,8 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OnlineReader.Data.Context;
 using OnlineReader.Data.Entities;
+using WebAPI.Infrastructure;
 
-namespace OnlineReader
+namespace WebAPI
 {
     /// <summary>
     /// Application startup.
@@ -25,9 +27,9 @@ namespace OnlineReader
             Configuration = configuration;
         }
 
-         /// <summary>
+        /// <summary>
         /// Gets application configuration.
-		/// </summary>
+        /// </summary>
         public IConfiguration Configuration { get; }
 
         /// <summary>
@@ -37,9 +39,25 @@ namespace OnlineReader
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+              mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddAutoMapper(typeof(Startup));
             services.AddDbContext<AppIdentityDbContext>(
                 options => options.UseSqlServer(Configuration["Data:OnlineReaderIdentity:ConnectionString"]));
-            services.AddIdentity<AppUser, IdentityRole>()
+            services.AddIdentity<AppUser, IdentityRole>(opts =>
+            {
+                opts.User.RequireUniqueEmail = true;
+                opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz";
+                opts.Password.RequiredLength = 8;
+                opts.Password.RequireDigit = false;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireNonAlphanumeric = false;
+                opts.Password.RequireUppercase = false;
+            })
                 .AddEntityFrameworkStores<AppIdentityDbContext>();
         }
 
