@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OnlineReader.Data.Context;
+using OnlineReader.Data.Entities;
 
 namespace OnlineReader
 {
@@ -12,17 +16,17 @@ namespace OnlineReader
     public class Startup
     {
         /// <summary>
-		/// Initialize new instance of <see cref="Startup"/>.
-		/// </summary>
-		/// <param name="configuration">Application configuration.</param>
-
-        public Startup(IConfiguration configuration)
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        /// <param name="env">Webhost environment.</param>
+        /// <param name="configuration">Application configuration properties.</param>
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
         }
 
-        /// <summary>
-        /// Application configuration.
+         /// <summary>
+        /// Gets application configuration.
 		/// </summary>
         public IConfiguration Configuration { get; }
 
@@ -30,9 +34,13 @@ namespace OnlineReader
 		/// Настраивает сервисы приложения.
 		/// </summary>
 		/// <param name="services">Коллекция сервисов.</param>
-        public static void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddDbContext<AppIdentityDbContext>(
+                options => options.UseSqlServer(Configuration["Data:OnlineReaderIdentity:ConnectionString"]));
+            services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppIdentityDbContext>();
         }
 
         /// <inheritdoc cref="IStartup.Configure" />
@@ -44,6 +52,8 @@ namespace OnlineReader
             }
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
