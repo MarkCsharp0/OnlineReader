@@ -21,8 +21,8 @@ namespace WebAPI.Infrastructure
             CreateMap<CreateModel, AppUser>()
                 .ForMember(
                     dest =>
-                dest.UserName,
-                    opt => щзopt.MapFrom(src => src.Name));
+                dest .UserName,
+                    opt => opt.MapFrom(src => src.Name));
         }
     }
 }

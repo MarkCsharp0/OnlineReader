@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineReader.Business", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI", "src\WebAPI\WebAPI.csproj", "{265C633C-0A80-4FFB-8178-977E61F9DB5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI.Tests", "tests\WebAPI.Tests\WebAPI.Tests.csproj", "{93BD7DB9-357E-4F79-AB28-2FB2AD5AC397}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{265C633C-0A80-4FFB-8178-977E61F9DB5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{265C633C-0A80-4FFB-8178-977E61F9DB5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{265C633C-0A80-4FFB-8178-977E61F9DB5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93BD7DB9-357E-4F79-AB28-2FB2AD5AC397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93BD7DB9-357E-4F79-AB28-2FB2AD5AC397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93BD7DB9-357E-4F79-AB28-2FB2AD5AC397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93BD7DB9-357E-4F79-AB28-2FB2AD5AC397}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
