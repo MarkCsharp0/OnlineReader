@@ -46,6 +46,7 @@ namespace WebAPI
 
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddAutoMapper(typeof(Startup));
+
             services.AddDbContext<AppIdentityDbContext>(
                 options => options.UseSqlServer(Configuration["Data:OnlineReaderIdentity:ConnectionString"]));
             services.AddIdentity<AppUser, IdentityRole>(opts =>
@@ -59,6 +60,8 @@ namespace WebAPI
                 opts.Password.RequireUppercase = false;
             })
                 .AddEntityFrameworkStores<AppIdentityDbContext>();
+
+            services.AddSwaggerGen();
         }
 
         /// <inheritdoc cref="IStartup.Configure" />
@@ -68,6 +71,13 @@ namespace WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                  c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseRouting();
 

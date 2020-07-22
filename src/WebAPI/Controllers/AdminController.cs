@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OnlineReader.Data.Entities;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
 {
-     /// <inheritdoc />
+    /// <inheritdoc />
     [ApiController]
     [Route("[controller]")]
     public class AdminController : ControllerBase
@@ -48,26 +49,27 @@ namespace WebAPI.Controllers
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [HttpPost]
         [Route("create")]
-        public async Task<CreateModel> Create(CreateModel model)
+        public async Task<ActionResult<CreateModel>> Create(CreateModel model)
         {
-            if (ModelState.IsValid)
+            var user = new AppUser
             {
-                var user = new AppUser
-                {
-                    UserName = model.Name,
-                    Email = model.Email,
-                };
-                var result = await userManager.CreateAsync(user, model.Password).ConfigureAwait(true);
-                if (result.Succeeded)
-                {
-                    return model;
-                } else
-                {
-                    return null;
-                }
+                UserName = model.Name,
+                Email = model.Email,
+            };
+            var result = await userManager.CreateAsync(user, model.Password).ConfigureAwait(true);
+            if (result.Succeeded)
+            {
+                return new ObjectResult(model);
             }
+            else
+            {
+                foreach (IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
 
-            return null;
+                return BadRequest(ModelState);
+            }
         }
 
         /// <summary>
@@ -77,7 +79,7 @@ namespace WebAPI.Controllers
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [HttpPost]
         [Route("{id}")]
-        public async Task<AppUser> Delete(string id)
+        public async Task<ActionResult<AppUser>> Delete(string id)
         {
             var user = await userManager.FindByIdAsync(id).ConfigureAwait(true);
             if (user != null)
@@ -86,13 +88,19 @@ namespace WebAPI.Controllers
                 if (result.Succeeded)
                 {
                     return user;
-                } else
+                }
+                else
                 {
-                    return null;
+                    foreach (IdentityError error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    return BadRequest(ModelState);
                 }
             }
 
-            return null;
+            return NotFound();
         }
 
         /// <summary>
@@ -102,7 +110,7 @@ namespace WebAPI.Controllers
         /// <returns>Измененный пользователь.</returns>
         [HttpPost]
         [Route("edit")]
-        public async Task<AppUser> Edit(CreateModel model)
+        public async Task<ActionResult<AppUser>> Edit(CreateModel model)
         {
             var user = await userManager.FindByNameAsync(model.Name).ConfigureAwait(true);
             if (user != null)
@@ -113,13 +121,19 @@ namespace WebAPI.Controllers
                 if (result.Succeeded)
                 {
                     return user;
-                } else
+                }
+                else
                 {
-                    return null;
+                    foreach (IdentityError error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    return BadRequest(ModelState);
                 }
             }
 
-            return null;
+            return NotFound();
         }
 
         /// <summary>
@@ -127,6 +141,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <returns>Список пользователей</returns>
         [Route("index")]
+        [HttpGet]
         public List<AppUser> Index()
         {
             return userManager.Users.ToList();
