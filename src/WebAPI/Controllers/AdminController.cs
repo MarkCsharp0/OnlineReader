@@ -45,7 +45,7 @@ namespace WebAPI.Controllers
         /// <summary>
         /// Создание пользователя.
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="model">Модель с информацией для создания пользователя.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [HttpPost]
         [Route("create")]
