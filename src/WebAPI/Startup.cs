@@ -14,6 +14,10 @@ using System.Text;
 using OnlineReader.Business.Services;
 using WebAPI.Infrastructure;
 using WebAPI.Interfaces;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace WebAPI
 {
@@ -46,7 +50,7 @@ namespace WebAPI
             services.AddControllers();
             var mappingConfig = new MapperConfiguration(mc =>
             {
-              mc.AddProfile(new MappingProfile());
+                mc.AddProfile(new MappingProfile());
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
@@ -66,7 +70,17 @@ namespace WebAPI
             })
                 .AddEntityFrameworkStores<AppIdentityDbContext>();
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(
+             options =>
+             {
+                // options.OperationFilter<SwaggerFileOperationFilter>();
+             });
+            services.Configure<FormOptions>(o =>
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
 
             _ = services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -105,18 +119,18 @@ namespace WebAPI
                 app.UseHsts();
             }
 
-            app.UseCors(builder => builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials()
-            );
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+                RequestPath = new PathString("/Resources"),
+            });
 
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
-                  c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
             app.UseRouting();

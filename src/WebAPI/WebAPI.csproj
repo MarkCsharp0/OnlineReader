@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <Folder Include="Repositories\" />
+    <Folder Include="Resources\Files\" />
   </ItemGroup>
 
 </Project>
