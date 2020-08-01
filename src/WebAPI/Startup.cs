@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using OnlineReader.Data.Repositories;
 
 namespace WebAPI
 {
@@ -55,6 +56,8 @@ namespace WebAPI
 
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddAutoMapper(typeof(Startup));
+
+            services.AddScoped<IDataRepository, DataRepository>();
 
             services.AddDbContext<AppIdentityDbContext>(
                 options => options.UseSqlServer(Configuration["Data:OnlineReaderIdentity:ConnectionString"]));

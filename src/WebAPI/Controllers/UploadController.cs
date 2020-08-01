@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OnlineReader.Data.Repositories;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,6 +16,13 @@ namespace WebAPI.Controllers
     [ApiController]
     public class UploadController : ControllerBase
     {
+        private readonly IDataRepository _dataRepository;
+
+        public UploadController(IDataRepository dataRepository)
+        {
+            _dataRepository = dataRepository;
+        }
+
         // GET: api/<UploadController>
         [HttpGet]
         public IEnumerable<string> Get()
@@ -32,7 +40,7 @@ namespace WebAPI.Controllers
         // POST api/<UploadController>
         [HttpPost("single-file")]
         [DisableRequestSizeLimit]
-        public IActionResult Post([FromForm] IFormFile file)
+        public IActionResult Post(IFormFile file)
         {
             var folderName = Path.Combine("Resources", "Files");
             var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
@@ -45,6 +53,14 @@ namespace WebAPI.Controllers
                 file.CopyTo(stream);
             }
 
+            var dbFile = new OnlineReader.Data.Entities.FileInfo
+            {
+                FileName = fileName,
+                Created = DateTime.UtcNow,
+                MimeType = "text",
+                BlobId = Guid.NewGuid().ToString(),
+            };
+            _dataRepository.PostFile(dbFile);
             return Ok(new { dbPath });
         }
 

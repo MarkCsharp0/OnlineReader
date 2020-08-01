@@ -139,7 +139,7 @@ namespace WebAPI.Controllers
         /// <summary>
         /// Возвращает список пользователей.
         /// </summary>
-        /// <returns>Список пользователей</returns>
+        /// <returns>Список пользователей.</returns>
         [Route("index")]
         [HttpGet]
         public List<AppUser> Index()
